@@ -15,7 +15,7 @@
  * Notes:
  *  - Supports both static inline (`CRAP_DMA_STATIC`) and external
  *    function declarations.
- *  - Designed for STM32F411CE, but may work with other STM32F4 devices.
+ *  - Designed for STM32F411CE
  *
  * Example:
  *  #define CRAP_DMA_IMPLEMENTATION
