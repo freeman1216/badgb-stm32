@@ -62,6 +62,6 @@ extern void assert_failed(uint32_t line, char *file) {
     while (1);
 }
 
-#endif // CRAP_ASSERT_IMPLEMENTATION
+#endif 
 
-#endif // CRAP_ASSERT_H
+#endif 

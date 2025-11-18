@@ -21,6 +21,7 @@ CRAP is a collection of simple, mostly header-only (stb style) drivers for STM32
 - Startup (`startup_stm32f411ceu6.c`) - startup file, plain and simple
 - Simple linker script (`stm32f411ceu6.ld`)
 
+Most of the drivers dont support full range of features yet, they will be implemented as needed.
 All drivers are **lightweight**, **easy to read**, and **easy to modify**, also easily inlinable by the compiler.
 ## How to use it  
 1. Include the header in your project.  
