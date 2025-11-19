@@ -3,11 +3,11 @@
 #include "common.h"
 #include "nvic.h"
 
-#define CRAP_RCC_IMPLEMENTATION
+#define BAD_RCC_IMPLEMENTATION
 #include "rcc.h"
 #include "flash.h"
 
-#define CRAP_IO_IMPLEMENTATION
+#define BAD_IO_IMPLEMENTATION
 #include "io.h"
 
 
@@ -33,13 +33,13 @@
 #define EXTI1_GPIO_PORT (GPIOB)
 #define EXTI1_PIN       (1)
 
-#define CRAP_USART_IMPLEMENTATION
+#define BAD_USART_IMPLEMENTATION
 #include "uart.h"
-#define CRAP_ASSERT_IMPLEMENTATION
-#define CRAP_ILI9341_STATIC
-#define CRAP_ILI9341_INCLUDE_ISRS
-#define CRAP_ILI9341_IMPLEMENTATION
-#define CRAP_ILI9431_USE_ASSERT
+#define BAD_ASSERT_IMPLEMENTATION
+#define BAD_ILI9341_STATIC
+#define BAD_ILI9341_INCLUDE_ISRS
+#define BAD_ILI9341_IMPLEMENTATION
+#define BAD_ILI9431_USE_ASSERT
 #include "ili9341.h"
 
 
@@ -54,24 +54,24 @@ uint16_t random_bitmap[240*240];
     // PLLQ = 10
     // PLLP = 4
     // Sysclock = 100
-#define CRAPGB_PLLM (25)
-#define CRAPGB_PLLN (400)
-#define CRAPGB_PLLQ (10)
-#define CRAPGB_FLASH_LATENCY (FLASH_LATENCY_3ws)
+#define BADHAL_PLLM (25)
+#define BADHAL_PLLN (400)
+#define BADHAL_PLLQ (10)
+#define BADHAL_FLASH_LATENCY (FLASH_LATENCY_3ws)
 
-#define CRAP_GB_AHB1_PERIPEHRALS    (RCC_AHB1_GPIOA|RCC_AHB1_DMA2|RCC_AHB1_GPIOB)
-#define CRAP_GB_APB2_PERIPHERALS    (RCC_APB2_USART1|RCC_APB2_SPI1|RCC_APB2_SYSCFGEN)
+#define BAD_GB_AHB1_PERIPEHRALS    (RCC_AHB1_GPIOA|RCC_AHB1_DMA2|RCC_AHB1_GPIOB)
+#define BAD_GB_APB2_PERIPHERALS    (RCC_APB2_USART1|RCC_APB2_SPI1|RCC_APB2_SYSCFGEN)
 
 static inline void __main_clock_setup(){
     rcc_enable_hse();
-    rcc_pll_setup( PLLP4, CRAPGB_PLLM, CRAPGB_PLLN, CRAPGB_PLLQ, PLL_SOURCE_HSE);
+    rcc_pll_setup( PLLP4, BADHAL_PLLM, BADHAL_PLLN, BADHAL_PLLQ, PLL_SOURCE_HSE);
     rcc_bus_prescalers_setup(HPRE_DIV_1, PPRE_DIV_2, PPRE_DIV_1);
-    flash_acceleration_setup(CRAPGB_FLASH_LATENCY, FLASH_DCACHE_ENABLE, FLASH_ICACHE_ENABLE);
+    flash_acceleration_setup(BADHAL_FLASH_LATENCY, FLASH_DCACHE_ENABLE, FLASH_ICACHE_ENABLE);
     rcc_enable_and_switch_to_pll();
 }
 
 static inline void __periph_setup(){
-    rcc_set_ahb1_clocking(CRAP_GB_AHB1_PERIPEHRALS);
+    rcc_set_ahb1_clocking(BAD_GB_AHB1_PERIPEHRALS);
     io_setup_pin(UART_GPIO_PORT, UART1_TX_PIN, MODER_af, UART1_TX_AF, OSPEEDR_high_speed, PUPDR_no_pull, OTYPR_push_pull);
     io_setup_pin(UART_GPIO_PORT, UART1_RX_PIN, MODER_af, UART1_RX_AF, OSPEEDR_high_speed, PUPDR_no_pull, OTYPR_push_pull);
     //Enable UART clocking
@@ -82,7 +82,7 @@ static inline void __periph_setup(){
     io_setup_pin(ILI9431_GPIO_PORT, ILI9431_RESET, MODER_output, 0, OSPEEDR_high_speed, PUPDR_no_pull, OTYPR_push_pull);
     io_setup_pin(ILI9431_GPIO_PORT, ILI9341_DC, MODER_output, 0, OSPEEDR_high_speed, PUPDR_no_pull, OTYPR_push_pull);
     //io_setup_pin(EXTI1_GPIO_PORT, EXTI1_PIN, MODER_reset_input, 0, OSPEEDR_high_speed, PUPDR_no_pull, OTYPR_push_pull);
-    rcc_set_apb2_clocking(CRAP_GB_APB2_PERIPHERALS);
+    rcc_set_apb2_clocking(BAD_GB_APB2_PERIPHERALS);
 }
 
 int main(){

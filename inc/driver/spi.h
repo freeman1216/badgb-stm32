@@ -2,7 +2,7 @@
  * @file spi.h
  * @brief Header only SPI driver
  *
- * - Define `CRAP_SPI_IMPLEMENTATION` in **one** C file to enable the
+ * - Define `BAD_SPI_IMPLEMENTATION` in **one** C file to enable the
  *    configuration function `io_setup_pin()`.
  * Usage Example:
  *
@@ -32,17 +32,17 @@
 
 
 #pragma once
-#ifndef CRAP_SPI_H
-#define CRAP_SPI_H
+#ifndef BAD_SPI_H
+#define BAD_SPI_H
 
 #include <stdint.h>
 
 #include "common.h"
 
-#ifdef CRAP_SPI_STATIC
-    #define CRAP_SPI_DEF ALWAYS_INLINE
+#ifdef BAD_SPI_STATIC
+    #define BAD_SPI_DEF ALWAYS_INLINE
 #else
-    #define CRAP_SPI_DEF extern
+    #define BAD_SPI_DEF extern
 #endif
 
 typedef struct{
@@ -128,34 +128,34 @@ ALWAYS_INLINE void spi_setup(__IO SPI_typedef_t* SPI, SPI_feature_t features,SPI
     SPI->CR2 = misc | interrupts;
 }
 
-CRAP_SPI_DEF void spi_enable(__IO SPI_typedef_t* SPI);
-CRAP_SPI_DEF void spi_disable(__IO SPI_typedef_t* SPI);
-CRAP_SPI_DEF uint8_t spi_transmit_recieve(__IO SPI_typedef_t *SPI, uint8_t data);
-CRAP_SPI_DEF void spi_transmit_only(__IO SPI_typedef_t *SPI, uint8_t data);
+BAD_SPI_DEF void spi_enable(__IO SPI_typedef_t* SPI);
+BAD_SPI_DEF void spi_disable(__IO SPI_typedef_t* SPI);
+BAD_SPI_DEF uint8_t spi_transmit_recieve(__IO SPI_typedef_t *SPI, uint8_t data);
+BAD_SPI_DEF void spi_transmit_only(__IO SPI_typedef_t *SPI, uint8_t data);
 
-#ifdef CRAP_SPI_IMPLEMENTATION
+#ifdef BAD_SPI_IMPLEMENTATION
 
 
-CRAP_SPI_DEF void spi_enable(__IO SPI_typedef_t* SPI){
+BAD_SPI_DEF void spi_enable(__IO SPI_typedef_t* SPI){
     SPI->CR1 |= SPI_CR1_SPIEN_MASK;
     while (!(SPI->CR1 & SPI_CR1_SPIEN_MASK));
     while (SPI->SR & SPI_SR_BSY_MASK); 
 }
 
-CRAP_SPI_DEF void spi_disable(__IO SPI_typedef_t* SPI){
+BAD_SPI_DEF void spi_disable(__IO SPI_typedef_t* SPI){
     while (SPI->SR & SPI_SR_BSY_MASK); 
     SPI->CR1 &= ~(SPI_CR1_SPIEN_MASK);
     while (SPI->CR1 & SPI_CR1_SPIEN_MASK); 
 }
 
 
-CRAP_SPI_DEF uint8_t spi_transmit_recieve(__IO SPI_typedef_t *SPI, uint8_t data){
+BAD_SPI_DEF uint8_t spi_transmit_recieve(__IO SPI_typedef_t *SPI, uint8_t data){
     SPI->DR = data;
     while (!(SPI->SR & SPI_SR_RXNE_MASK));
     return SPI->DR;
 } 
 
-CRAP_SPI_DEF void spi_transmit_only(__IO SPI_typedef_t *SPI, uint8_t data){;     
+BAD_SPI_DEF void spi_transmit_only(__IO SPI_typedef_t *SPI, uint8_t data){;     
     SPI->DR = data;
     while (!(SPI->SR & SPI_SR_BSY_MASK));
     while (SPI->SR & SPI_SR_BSY_MASK); 
@@ -163,15 +163,15 @@ CRAP_SPI_DEF void spi_transmit_only(__IO SPI_typedef_t *SPI, uint8_t data){;
 }
 #endif
 
-#ifdef CRAP_SPI_SPI1_ISR_IMPLEMENTATION
+#ifdef BAD_SPI_SPI1_ISR_IMPLEMENTATION
 
-#ifdef CRAP_SPI_SPI1_USE_RXNE
+#ifdef BAD_SPI_SPI1_USE_RXNE
 void spi1_rx_isr(uint16_t data);
 #endif
 
 STRONG_ISR(spi1_isr){
     if(SPI1->SR & SPI_SR_RXNE_MASK){
-#ifdef CRAP_SPI_SPI1_USE_RXNE
+#ifdef BAD_SPI_SPI1_USE_RXNE
         spi1_rx_isr();
 #endif
     }

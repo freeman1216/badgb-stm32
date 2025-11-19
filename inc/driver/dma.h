@@ -5,22 +5,22 @@
  * 
  *
  * Usage:
- *  - Include this file and define CRAP_DMA_IMPLEMENTATION in **one**
+ *  - Include this file and define BAD_DMA_IMPLEMENTATION in **one**
  *    C file to enable the `dma_setup_transfer` function definition.
- *  - Define CRAP_DMA_DMA2_STREAM2_ISR_IMPLEMENTATION to provide
+ *  - Define BAD_DMA_DMA2_STREAM2_ISR_IMPLEMENTATION to provide
  *    the DMA2 Stream2 interrupt service routine with optional callbacks.
- *    Then define which callbacks to use (e.g., CRAP_DMA_DMA2_STREAM2_USE_FE,
+ *    Then define which callbacks to use (e.g., BAD_DMA_DMA2_STREAM2_USE_FE,
  *    USE_TC, USE_DME, USE_HT, USE_TE) and implement your callback functions.
  *  
  * Notes:
- *  - Supports both static inline (`CRAP_DMA_STATIC`) and external
+ *  - Supports both static inline (`BAD_DMA_STATIC`) and external
  *    function declarations.
  *  - Designed for STM32F411CE
  *
  * Example:
- *  #define CRAP_DMA_IMPLEMENTATION
- *  #define CRAP_DMA_DMA2_STREAM2_ISR_IMPLEMENTATION
- *  #define CRAP_DMA_DMA2_STREAM2_USE_TC
+ *  #define BAD_DMA_IMPLEMENTATION
+ *  #define BAD_DMA_DMA2_STREAM2_ISR_IMPLEMENTATION
+ *  #define BAD_DMA_DMA2_STREAM2_USE_TC
  *  #include "dma.h"
  *
  *  #define MY_DMA_INTERRUPTS   (DMA_enable_TC)
@@ -39,16 +39,16 @@
 
 
 #pragma once
-#ifndef CRAP_DMA_H
-#define CRAP_DMA_H
+#ifndef BAD_DMA_H
+#define BAD_DMA_H
 #include <stdint.h>
 
 #include "common.h"
 
-#ifdef CRAP_DMA_STATIC
-    #define CRAP_DMA_DEF static inline
+#ifdef BAD_DMA_STATIC
+    #define BAD_DMA_DEF static inline
 #else
-    #define CRAP_DMA_DEF extern
+    #define BAD_DMA_DEF extern
 #endif
 
 typedef struct{
@@ -185,7 +185,7 @@ ALWAYS_INLINE void dma_start_transfer(__IO DMA_typedef_t * DMA, DMA_stream_num_t
     DMA->streams[stream].CR |= CR_EN_MASK;
 }
 
-CRAP_DMA_DEF void dma_setup_transfer(__IO DMA_typedef_t * DMA, 
+BAD_DMA_DEF void dma_setup_transfer(__IO DMA_typedef_t * DMA, 
     DMA_stream_num_t stream,
     DMA_channel_num_t channel,volatile uint32_t mem,
     uint16_t bufflen,
@@ -196,9 +196,9 @@ CRAP_DMA_DEF void dma_setup_transfer(__IO DMA_typedef_t * DMA,
 
 
 
-#ifdef CRAP_DMA_IMPLEMENTATION
+#ifdef BAD_DMA_IMPLEMENTATION
 
-CRAP_DMA_DEF void dma_setup_transfer(__IO DMA_typedef_t * DMA, DMA_stream_num_t stream,DMA_channel_num_t channel,volatile uint32_t mem,uint16_t bufflen,uint32_t periph, DMA_interrupts_t interrupts, DMA_features_t features,DMA_fifo_settings_t fifo_settings){
+BAD_DMA_DEF void dma_setup_transfer(__IO DMA_typedef_t * DMA, DMA_stream_num_t stream,DMA_channel_num_t channel,volatile uint32_t mem,uint16_t bufflen,uint32_t periph, DMA_interrupts_t interrupts, DMA_features_t features,DMA_fifo_settings_t fifo_settings){
     DMA->streams[stream].CR &= ~(CR_EN_MASK);
     while(DMA->streams[stream].CR & CR_EN_MASK);
     dma_clear_interrupts(DMA, stream, DMA_clear_all);
@@ -213,25 +213,25 @@ CRAP_DMA_DEF void dma_setup_transfer(__IO DMA_typedef_t * DMA, DMA_stream_num_t 
 
 
 
-#ifdef CRAP_DMA_DMA2_STREAM2_ISR_IMPLEMENTATION
+#ifdef BAD_DMA_DMA2_STREAM2_ISR_IMPLEMENTATION
 
-#ifdef CRAP_DMA_DMA2_STREAM2_USE_FE
+#ifdef BAD_DMA_DMA2_STREAM2_USE_FE
 void dma2_stream2_fe(uint16_t offset);
 #endif
 
-#ifdef CRAP_DMA_DMA2_STREAM2_USE_DME
+#ifdef BAD_DMA_DMA2_STREAM2_USE_DME
 void dma2_stream2_dme(uint16_t offset);
 #endif
 
-#ifdef CRAP_DMA_DMA2_STREAM2_USE_TE
+#ifdef BAD_DMA_DMA2_STREAM2_USE_TE
 void dma2_stream2_te(uint16_t offset);
 #endif
 
-#ifdef CRAP_DMA_DMA2_STREAM2_USE_TC
+#ifdef BAD_DMA_DMA2_STREAM2_USE_TC
 void dma2_stream2_tc(uint16_t offset);
 #endif
 
-#ifdef CRAP_DMA_DMA2_STREAM2_USE_HT
+#ifdef BAD_DMA_DMA2_STREAM2_USE_HT
 void dma2_stream2_ht(uint16_t offset);
 #endif
 
@@ -248,21 +248,21 @@ STRONG_ISR(dma2_stream2_isr){
     if(DMA2->LISR & DMA_Stream2_frame_error){
         
         DMA2->LIFCR |= DMA_Stream2_frame_error;
-#ifdef CRAP_DMA_DMA2_STREAM2_USE_FE
+#ifdef BAD_DMA_DMA2_STREAM2_USE_FE
         dma2_stream2_fe(DMA2->streams[2].NDTR);
 #endif
     }
 
     if(DMA2->LISR & DMA_Stream2_direct_mode_error){
         DMA2->LIFCR |= DMA_Stream2_direct_mode_error;
-#ifdef CRAP_DMA_DMA2_STREAM2_USE_DME
+#ifdef BAD_DMA_DMA2_STREAM2_USE_DME
         dma2_stream2_dme(DMA2->streams[2].NDTR);
 #endif
     }
 
     if(DMA2->LISR & DMA_Stream2_transfer_error){
         DMA2->LIFCR |= DMA_Stream2_transfer_error;
-#ifdef CRAP_DMA_DMA2_STREAM2_USE_TE
+#ifdef BAD_DMA_DMA2_STREAM2_USE_TE
         dma2_stream2_te(DMA2->streams[2].NDTR);
 #endif
     }
@@ -270,14 +270,14 @@ STRONG_ISR(dma2_stream2_isr){
     if(DMA2->LISR & DMA_Stream2_transfer_complete){
         
         DMA2->LIFCR|= DMA_Stream2_transfer_complete;
-#ifdef CRAP_DMA_DMA2_STREAM2_USE_TC
+#ifdef BAD_DMA_DMA2_STREAM2_USE_TC
         dma2_stream2_tc(DMA2->streams[2].NDTR);
 #endif
     }
 
     if(DMA2->LISR & DMA_Stream2_half_transfer){
         DMA2->LIFCR |= DMA_Stream2_half_transfer;
-#ifdef CRAP_DMA_DMA2_STREAM2_USE_HT
+#ifdef BAD_DMA_DMA2_STREAM2_USE_HT
         dma2_stream2_ht(DMA2->streams[2].NDTR);
 #endif
     }

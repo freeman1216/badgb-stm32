@@ -5,11 +5,11 @@
  * 
  * Usage: 
  * - Include this file in your project. 
- * - Define CRAP_IO_IMPLEMENTATION in **one** C file to enable the 
+ * - Define BAD_IO_IMPLEMENTATION in **one** C file to enable the 
  * configuration function io_setup_pin().
  * - io_setup_pin() can only be included once and called only from the same file 
  * 
- * Example: * #define CRAP_IO_IMPLEMENTATION * #include "io.h" 
+ * Example: * #define BAD_IO_IMPLEMENTATION * #include "io.h" 
  *
  * // Configure PA5 as push-pull output, no pull resistor  
  * io_setup_pin(GPIOA, 5, 
@@ -24,8 +24,8 @@
  * io_pin_reset(GPIOA, 5); 
  */
 #pragma once
-#ifndef CRAP_IO_H
-#define CRAP_IO_H
+#ifndef BAD_IO_H
+#define BAD_IO_H
 
 #include <stdint.h>
 
@@ -65,7 +65,7 @@ ALWAYS_INLINE void io_pin_reset(volatile GPIO_typedef_t *GPIO, uint8_t pin_num){
     GPIO->BSRR = BSSRx_BR(pin_num);
 }
 
-#ifdef CRAP_IO_IMPLEMENTATION
+#ifdef BAD_IO_IMPLEMENTATION
 #define MODERx_MASK(x)  (0x3<<(x * 2))
 #define MODERx_SET(val,x)((val & 0x3) <<(x * 2))
 #define OSPEEDRx_SET(val,x) ((val & 0x3)<<(x * 2))

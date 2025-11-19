@@ -5,13 +5,13 @@
  *
  * Usage:
  *  - Include this file in your project.
- *  - Define `CRAP_RCC_IMPLEMENTATION` in **one** C file to include
+ *  - Define `BAD_RCC_IMPLEMENTATION` in **one** C file to include
  *    inline function definitions.
  *  - Only one function (rcc_fallback_to_hsi()) can be called from other files
  *  - Use provided functions to configure clocks, PLL, and enable peripherals.
  *
  * Example:
- *  #define CRAP_RCC_IMPLEMENTATION
+ *  #define BAD_RCC_IMPLEMENTATION
  *  #include "rcc.h"
  *  
  *   rcc_enable_hse();
@@ -24,12 +24,12 @@
 
 #pragma once
 
-#ifndef CRAP_RCC_H
-#define CRAP_RCC_H
+#ifndef BAD_RCC_H
+#define BAD_RCC_H
 
 
 extern void rcc_fallback_to_hsi();
-#ifdef CRAP_RCC_IMPLEMENTATION
+#ifdef BAD_RCC_IMPLEMENTATION
 #include <stdint.h>
 
 #include "common.h"

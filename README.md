@@ -1,23 +1,23 @@
-# CRAPHAL – Bare-Metal Drivers for STM32
+# BADHAL – Bare-Metal Drivers for STM32
 
-**Why “CRAPHAL”?**  
+**Why “BADHAL”?**  
 Because honestly, the standard HAL library drove me nuts. Too much boilerplate, too many places where the state changes, some unexplained delays (DMA busy still haunts me). So I decided to just write my own lightweight drivers that actually make sense.
 
 ## What is this?  
-CRAP is a collection of simple, mostly header-only (stb style) drivers for STM32F411CEU6. It includes:  
+BAD is a collection of simple, mostly header-only (stb style) drivers for STM32F411CEU6. It includes:  
 
-- GPIO (`io.h`) - easy pin setup, set/reset pins, configure alternate functions.  
-- NVIC (`nvic.h`) - enable/disable interrupts, simple as that.  
-- SPI (`spi.h`) - full SPI setup, DMA support, interrupt-friendly.  
-- EXTI (`exti.h`) - external interrupts with configurable trigger.  
+- GPIO (`driver/io.h`) - easy pin setup, set/reset pins, configure alternate functions.  
+- NVIC (`driver/nvic.h`) - enable/disable interrupts, simple as that.  
+- SPI (`driver/spi.h`) - full SPI setup, DMA support, interrupt-friendly.  
+- EXTI (`driver/exti.h`) - external interrupts with configurable trigger.  
 - Assert (`assert.h`) - prints messages over UART if things go wrong.  
 - ILI9341 (`ili9341.h`) - basic LCD driver with DMA framebuffer support.  
-- DMA (`dma.h`) - DMA control and interrupts
-- UART (`uart.h`) - Basic uart stuff
-- SYSCFG (`syscfg.h`) - Syscfg, for now only for exti
-- Flash (`flash.h`) - setup latency, caches, and prefetch.
-- RCC  (`rcc.h`) - clock configuration 
-- Handlers (`handlers.c`) - for now only implements a hardfault that reports the registers state at fault
+- DMA (`driver/dma.h`) - DMA control and interrupts
+- UART (`driver/uart.h`) - Basic uart stuff
+- SYSCFG (`driver/syscfg.h`) - Syscfg, for now only for exti
+- Flash (`driver/flash.h`) - setup latency, caches, and prefetch.
+- RCC  (`driver/rcc.h`) - clock configuration 
+- Handlers (`driver/handlers.c`) - for now only implements a hardfault that reports the registers state at fault
 - Startup (`startup_stm32f411ceu6.c`) - startup file, plain and simple
 - Simple linker script (`stm32f411ceu6.ld`)
 
@@ -28,7 +28,7 @@ All drivers are **lightweight**, **easy to read**, and **easy to modify**, also 
 2. If a driver has a `_IMPLEMENTATION` define, enable it in **one C file**, or use it statically:
 
 ```c
-#define CRAP_IO_IMPLEMENTATION
+#define BAD_IO_IMPLEMENTATION
 #include "io.h"
 ```
 3. Use the function!

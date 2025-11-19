@@ -21,7 +21,7 @@
 
 
 #pragma once
-#ifndef CRAP_FLASH_H
+#ifndef BAD_FLASH_H
 
 #include <stdint.h>
 #include "common.h"

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CRAP_COMMON_H
-#define CRAP_COMMON_H
+#ifndef BAD_COMMON_H
+#define BAD_COMMON_H
 //common defines and other stuff
 #define __IO volatile
 

@@ -18,17 +18,17 @@
  */
 
 #pragma once 
-#ifndef CRAP_EXTI
-#define CRAP_EXTI
+#ifndef BAD_EXTI
+#define BAD_EXTI
 
 #include "stdint.h"
 
 #include "common.h"
 
-#ifdef CRAP_EXTI_STATIC
-    #define CRAP_EXTI_DEF static inline
+#ifdef BAD_EXTI_STATIC
+    #define BAD_EXTI_DEF static inline
 #else
-    #define CRAP_EXTI_DEF extern
+    #define BAD_EXTI_DEF extern
 #endif
 
 typedef struct{
@@ -48,10 +48,10 @@ typedef enum {
 
 #define EXTI_BASE   (0x40013C00UL)
 #define EXTI        ((__IO EXTI_typedef_t *)EXTI_BASE)
-CRAP_EXTI_DEF void exti_configure_line(uint8_t line, EXTI_trigger_t trigger);
-#ifdef CRAP_EXTI_IMPLEMENTATION
+BAD_EXTI_DEF void exti_configure_line(uint8_t line, EXTI_trigger_t trigger);
+#ifdef BAD_EXTI_IMPLEMENTATION
 
-CRAP_EXTI_DEF void exti_configure_line(uint8_t line, EXTI_trigger_t trigger)
+BAD_EXTI_DEF void exti_configure_line(uint8_t line, EXTI_trigger_t trigger)
 {
     
     EXTI->RTSR &= ~(1 << line);
@@ -69,7 +69,7 @@ CRAP_EXTI_DEF void exti_configure_line(uint8_t line, EXTI_trigger_t trigger)
 }
 
 #endif
-#ifdef CRAP_EXTI1_ISR_IMPLEMENTATION
+#ifdef BAD_EXTI1_ISR_IMPLEMENTATION
 
 void exti1_usr();
 

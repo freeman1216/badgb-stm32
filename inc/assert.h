@@ -11,7 +11,7 @@
  *
  * Usage:
  *  #define ASSERT_UART USART2   // Optional, override default USART1
- *  #define CRAP_ASSERT_IMPLEMENTATION
+ *  #define BAD_ASSERT_IMPLEMENTATION
  *  #include "assert.h"
  *
  *  int x = 5;
@@ -27,8 +27,8 @@
 
 
 #pragma once
-#ifndef CRAP_ASSERT_H
-#define CRAP_ASSERT_H
+#ifndef BAD_ASSERT_H
+#define BAD_ASSERT_H
 
 #include <stdint.h>
 #include "uart.h"
@@ -48,7 +48,7 @@
 
 extern void assert_failed(uint32_t line, char *file);
 
-#ifdef CRAP_ASSERT_IMPLEMENTATION
+#ifdef BAD_ASSERT_IMPLEMENTATION
 
 extern void assert_failed(uint32_t line, char *file) {
     uart_disable(ASSERT_UART);

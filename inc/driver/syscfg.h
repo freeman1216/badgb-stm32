@@ -16,8 +16,8 @@
  */
 
 #pragma once
-#ifndef CRAP_SYSCFG
-#define CRAP_SYSCFG
+#ifndef BAD_SYSCFG
+#define BAD_SYSCFG
 
 #include <stdint.h>
 

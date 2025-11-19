@@ -17,7 +17,7 @@
 
 #include "common.h"
 
-#ifdef CRAP_HANDLERS_USE_UART
+#ifdef BAD_HANDLERS_USE_UART
 
 #include "uart.h"
 #ifndef FAULT_LOG_UART
@@ -77,7 +77,7 @@ void hardfault_c(uint32_t* stack){
     volatile uint32_t bfar = SCB->BFAR;
     volatile uint32_t afsr = SCB->AFSR;
     volatile uint32_t dfsr = SCB->DFSR;
-#ifdef CRAP_HANDLERS_USE_UART
+#ifdef BAD_HANDLERS_USE_UART
     uart_disable(FAULT_LOG_UART);
     uart_setup(FAULT_LOG_UART,USART_BRR_9600,FAULT_LOG_UART_SETTINGS,0,0);
     uart_enable(FAULT_LOG_UART);

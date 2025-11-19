@@ -5,22 +5,22 @@
  *
  *
  * Usage:
- *  - Include this file and define CRAP_USART_IMPLEMENTATION in **one**
+ *  - Include this file and define BAD_USART_IMPLEMENTATION in **one**
  *    C file to enable the UART function definitions.
- *  - Define CRAP_USART_USART1_ISR_IMPLEMENTATION and CRAP_USART_USART1_USE_RXNE
+ *  - Define BAD_USART_USART1_ISR_IMPLEMENTATION and BAD_USART_USART1_USE_RXNE
  *    to implement a receive callback using interrupts.
  *  - 
  * Notes:
- *  - Supports both static inline (`CRAP_USART_STATIC`) and external
+ *  - Supports both static inline (`BAD_USART_STATIC`) and external
  *    function declarations.
  *  - Designed for STM32F411CE 
  *  - GTPR,CR2 and most of the CR3 stuff not implemented yet
  *  - uart_setup() just writes whole registers, it is the intended way, 
  *    if you wanna change some settings during runtime use a separate #define with all of the needed settings
  * Example:
- *  #define CRAP_USART_IMPLEMENTATION
- *  #define CRAP_USART_USART1_ISR_IMPLEMENTATION
- *  #define CRAP_USART_USART1_USE_RXNE
+ *  #define BAD_USART_IMPLEMENTATION
+ *  #define BAD_USART_USART1_ISR_IMPLEMENTATION
+ *  #define BAD_USART_USART1_USE_RXNE
  *  #include "uart.h"
  *  #define MY_UART_SETTINGS_FULL_DUPLEX (USART_FEATURE_RECIEVE_EN | USART_FEATURE_TRANSMIT_EN)
  *  #define 
@@ -40,17 +40,17 @@
 
 #pragma once
 
-#ifndef CRAP_UART_H
-#define CRAP_UART_H
+#ifndef BAD_UART_H
+#define BAD_UART_H
 #include <stdint.h>
 
 #include "common.h"
 
-#ifndef CRAP_USART_DEF
-#ifdef CRAP_USART_STATIC
-    #define CRAP_USART_DEF ALWAYS_INLINE
+#ifndef BAD_USART_DEF
+#ifdef BAD_USART_STATIC
+    #define BAD_USART_DEF ALWAYS_INLINE
 #else
-    #define CRAP_USART_DEF extern
+    #define BAD_USART_DEF extern
 #endif
 #endif
 
@@ -121,7 +121,7 @@ typedef enum{
     USART_MISC_DMA_TRANSMIT = 0x80
 }USART_misc_t;
 
-CRAP_USART_DEF void uart_enable(__IO USART_typedef_t* USART){
+BAD_USART_DEF void uart_enable(__IO USART_typedef_t* USART){
     while (!(USART->SR & USART_SR_TC));
     USART->CR1 |= USART_CR1_USART_ENABLE;
 }
@@ -146,31 +146,31 @@ ALWAYS_INLINE void uart_disable_interrupts(__IO USART_typedef_t USART,USART_inte
     USART1->CR1 &= ~(interrupts);
 }
 
-CRAP_USART_DEF void uart_putchar_polling(__IO USART_typedef_t*,char);
-CRAP_USART_DEF char uart_getchar_polling(__IO USART_typedef_t*);
-CRAP_USART_DEF void uart_setup(__IO USART_typedef_t * USART,
+BAD_USART_DEF void uart_putchar_polling(__IO USART_typedef_t*,char);
+BAD_USART_DEF char uart_getchar_polling(__IO USART_typedef_t*);
+BAD_USART_DEF void uart_setup(__IO USART_typedef_t * USART,
     uint16_t BRR,
     USART_feature_t features,
     USART_misc_t misc,
     USART_interrupt_flags_t interrupt);
-CRAP_USART_DEF void uart_send_str_polling(__IO USART_typedef_t* USART ,const char* str);
-CRAP_USART_DEF void uart_send_hex_32bit(__IO USART_typedef_t* USART,uint32_t value);
-CRAP_USART_DEF void uart_send_dec_unsigned_32bit(__IO USART_typedef_t *USART ,uint32_t value);
+BAD_USART_DEF void uart_send_str_polling(__IO USART_typedef_t* USART ,const char* str);
+BAD_USART_DEF void uart_send_hex_32bit(__IO USART_typedef_t* USART,uint32_t value);
+BAD_USART_DEF void uart_send_dec_unsigned_32bit(__IO USART_typedef_t *USART ,uint32_t value);
 
-#ifdef CRAP_USART_IMPLEMENTATION
+#ifdef BAD_USART_IMPLEMENTATION
 
 
-CRAP_USART_DEF void uart_putchar_polling(__IO USART_typedef_t* USART,char ch){
+BAD_USART_DEF void uart_putchar_polling(__IO USART_typedef_t* USART,char ch){
     while (!(USART->SR & USART_SR_TXE)); 
     USART->DR = ch;
 }
 
-CRAP_USART_DEF char uart_getchar_polling(__IO USART_typedef_t* USART){
+BAD_USART_DEF char uart_getchar_polling(__IO USART_typedef_t* USART){
     while(!(USART->SR & USART_SR_RXNE));
     return (char)USART->DR;
 }
 
-CRAP_USART_DEF void uart_setup(__IO USART_typedef_t * USART,
+BAD_USART_DEF void uart_setup(__IO USART_typedef_t * USART,
     uint16_t BRR,
     USART_feature_t features,
     USART_misc_t misc,
@@ -181,14 +181,14 @@ CRAP_USART_DEF void uart_setup(__IO USART_typedef_t * USART,
     USART->CR2 = 0; //unsupported for now
     USART->CR3 = misc;
 }
-CRAP_USART_DEF void uart_send_str_polling(__IO USART_typedef_t* USART ,const char* str){
+BAD_USART_DEF void uart_send_str_polling(__IO USART_typedef_t* USART ,const char* str){
     while(*str){
         uart_putchar_polling(USART,*str);
         str++;
     }   
 }
 
-CRAP_USART_DEF void uart_send_hex_32bit(__IO USART_typedef_t* USART,uint32_t value){
+BAD_USART_DEF void uart_send_hex_32bit(__IO USART_typedef_t* USART,uint32_t value){
     const char lookup[] ="0123456789ABCDEF";
     
     for (uint8_t i = 0; i < 8 ;i++){
@@ -200,7 +200,7 @@ CRAP_USART_DEF void uart_send_hex_32bit(__IO USART_typedef_t* USART,uint32_t val
     uart_send_str_polling(USART, "\r\n");
 }
 
-CRAP_USART_DEF void uart_send_dec_unsigned_32bit(__IO USART_typedef_t *USART ,uint32_t value){
+BAD_USART_DEF void uart_send_dec_unsigned_32bit(__IO USART_typedef_t *USART ,uint32_t value){
     char buff[11];
     uint8_t idx = 0;
     
@@ -221,14 +221,14 @@ CRAP_USART_DEF void uart_send_dec_unsigned_32bit(__IO USART_typedef_t *USART ,ui
 #endif
 
 
-#ifdef CRAP_USART_USART1_ISR_IMPLEMENTATION
-#ifdef CRAP_USART_USART1_USE_RXNE
+#ifdef BAD_USART_USART1_ISR_IMPLEMENTATION
+#ifdef BAD_USART_USART1_USE_RXNE
 void usart1_rx_isr(char);
 #endif
 
 STRONG_ISR(usart1_isr){
     if(USART1->SR & RXNE_MASK){
-#ifdef CRAP_USART_USART1_USE_RXNE
+#ifdef BAD_USART_USART1_USE_RXNE
         usart1_rx_isr(USART1->DR);
 #endif
     }

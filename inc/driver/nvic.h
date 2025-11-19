@@ -12,7 +12,7 @@
  */
 
 #pragma once
-#ifndef CRAP_NVIC_H
+#ifndef BAD_NVIC_H
 
 #include "stdint.h"
 

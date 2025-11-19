@@ -4,13 +4,13 @@
  *
  * Usage:
  *  - Include this file in your project.
- *  - Define `CRAP_ILI9341_IMPLEMENTATION` in **one** C file to enable
+ *  - Define `BAD_ILI9341_IMPLEMENTATION` in **one** C file to enable
  *    all driver functions.
- *  - Optionally define `CRAP_ILI9341_STATIC` to make all functions `static inline`.
- *  - Optionally define `CRAP_ILI9341_INCLUDE_ISRS` to enable DMA transfer complete ISR support.
+ *  - Optionally define `BAD_ILI9341_STATIC` to make all functions `static inline`.
+ *  - Optionally define `BAD_ILI9341_INCLUDE_ISRS` to enable DMA transfer complete ISR support.
  *
  * Example:
- *  #define CRAP_ILI9341_IMPLEMENTATION
+ *  #define BAD_ILI9341_IMPLEMENTATION
  *  #include "ili9341.h"
  *
  *  // Initialize the LCD
@@ -31,25 +31,25 @@
  */
 
 #pragma once
-#ifndef CRAP_ILI9341_H
-#define CRAP_ILI9341_H
+#ifndef BAD_ILI9341_H
+#define BAD_ILI9341_H
 
 #include <stdint.h>
 
 #include "nvic.h"
 
-#if defined (CRAP_ILI9341_STATIC) && defined(CRAP_ILI9341_IMPLEMENTATION)
-#define CRAP_SPI_STATIC
-#define CRAP_DMA_STATIC
-#define CRAP_DMA_IMPLEMENTATION
-#define CRAP_SPI_IMPLEMENTATION
+#if defined (BAD_ILI9341_STATIC) && defined(BAD_ILI9341_IMPLEMENTATION)
+#define BAD_SPI_STATIC
+#define BAD_DMA_STATIC
+#define BAD_DMA_IMPLEMENTATION
+#define BAD_SPI_IMPLEMENTATION
 #endif
 
 
 
-#if defined (CRAP_ILI9341_IMPLEMENTATION) && defined (CRAP_ILI9341_INCLUDE_ISRS)
-#define CRAP_DMA_DMA2_STREAM2_USE_TC
-#define CRAP_DMA_DMA2_STREAM2_ISR_IMPLEMENTATION
+#if defined (BAD_ILI9341_IMPLEMENTATION) && defined (BAD_ILI9341_INCLUDE_ISRS)
+#define BAD_DMA_DMA2_STREAM2_USE_TC
+#define BAD_DMA_DMA2_STREAM2_ISR_IMPLEMENTATION
 #endif
 
 
@@ -60,17 +60,17 @@
 
 #include "dma.h"
 
-#ifdef CRAP_ILI9431_USE_ASSERT
+#ifdef BAD_ILI9431_USE_ASSERT
 #include "assert.h"
 #define ILI9341_ASSERT(x) ASSERT(x)
 #else
 #define ILI9341_ASSERT(x) 
 #endif
 
-#ifdef CRAP_ILI9341_STATIC
-#define CRAP_ILI9341_DEF static inline
+#ifdef BAD_ILI9341_STATIC
+#define BAD_ILI9341_DEF static inline
 #else
-#define CRAP_ILI9341_DEF extern
+#define BAD_ILI9341_DEF extern
 #endif
 
 
@@ -104,14 +104,14 @@
 #define ILI9341_LCD_HEIGHT              (320)
 #define ILI9341_LCD_WIDTH               (240)
 
-CRAP_ILI9341_DEF void ili9341_init(void);
-CRAP_ILI9341_DEF void ili9341_fill(uint16_t color);
-CRAP_ILI9341_DEF void ili9341_fb_dma_fill_centered(uint16_t* fb, uint16_t width, uint16_t height);
-CRAP_ILI9341_DEF void ili9341_fb_dma_fill(uint16_t* fb, uint16_t x_start, uint16_t y_start,uint16_t x_end,uint16_t y_end);
-CRAP_ILI9341_DEF uint8_t ili9341_poll_dma_ready();
+BAD_ILI9341_DEF void ili9341_init(void);
+BAD_ILI9341_DEF void ili9341_fill(uint16_t color);
+BAD_ILI9341_DEF void ili9341_fb_dma_fill_centered(uint16_t* fb, uint16_t width, uint16_t height);
+BAD_ILI9341_DEF void ili9341_fb_dma_fill(uint16_t* fb, uint16_t x_start, uint16_t y_start,uint16_t x_end,uint16_t y_end);
+BAD_ILI9341_DEF uint8_t ili9341_poll_dma_ready();
 
 
-#ifdef CRAP_ILI9341_IMPLEMENTATION
+#ifdef BAD_ILI9341_IMPLEMENTATION
 
 ALWAYS_INLINE void ili9341_spi_fb_transmition_mode(){
     spi_disable(ILI9341_SPI);
@@ -132,7 +132,7 @@ ALWAYS_INLINE void ili9341_disable(void)    { io_pin_reset(ILI9341_GPIO_PORT, IL
 ALWAYS_INLINE void ili9341_dc_command(void) { io_pin_reset(ILI9341_GPIO_PORT, ILI9341_DC_PIN); }
 ALWAYS_INLINE void ili9341_dc_data(void)    { io_pin_set(ILI9341_GPIO_PORT, ILI9341_DC_PIN); }
 
-#ifdef CRAP_ILI9341_INCLUDE_ISRS
+#ifdef BAD_ILI9341_INCLUDE_ISRS
 
 STRONG_USER_ISR(dma2_stream2_tc,uint16_t offset){
     ili9341_deselect();
@@ -174,11 +174,11 @@ ALWAYS_INLINE void ili9341_send_data(uint8_t data)
     ili9341_deselect();
 }
 
-CRAP_ILI9341_DEF uint8_t ili9341_poll_dma_ready(){
+BAD_ILI9341_DEF uint8_t ili9341_poll_dma_ready(){
     return dma_stream_n_poll_ready(ILI9341_DMA, ILI9341_DMA_STREAM);
 }
 
-CRAP_ILI9341_DEF void ili9341_init(void)
+BAD_ILI9341_DEF void ili9341_init(void)
 {
     ili9341_enable();
 
@@ -313,7 +313,7 @@ CRAP_ILI9341_DEF void ili9341_init(void)
 }
 
 // ==== Example helper: fill screen ====
-CRAP_ILI9341_DEF void ili9341_fill(uint16_t color)
+BAD_ILI9341_DEF void ili9341_fill(uint16_t color)
 {
     ili9341_send_cmd(0x2A); // column addr set
     ili9341_send_data(0x0); ili9341_send_data(0x00);
@@ -332,7 +332,7 @@ CRAP_ILI9341_DEF void ili9341_fill(uint16_t color)
     ili9341_deselect();
 }
 
-CRAP_ILI9341_DEF void ili9341_fb_dma_fill(uint16_t* fb, uint16_t x_start, uint16_t y_start,uint16_t x_end,uint16_t y_end){
+BAD_ILI9341_DEF void ili9341_fb_dma_fill(uint16_t* fb, uint16_t x_start, uint16_t y_start,uint16_t x_end,uint16_t y_end){
     uint16_t width = (x_end - x_start )+1;
     uint16_t length = (y_end -y_start)+1;
     ILI9341_ASSERT(width*length< UINT16_MAX);
@@ -365,7 +365,7 @@ CRAP_ILI9341_DEF void ili9341_fb_dma_fill(uint16_t* fb, uint16_t x_start, uint16
     
 }
 
-CRAP_ILI9341_DEF void ili9341_fb_dma_fill_centered(uint16_t* fb, uint16_t width, uint16_t height){
+BAD_ILI9341_DEF void ili9341_fb_dma_fill_centered(uint16_t* fb, uint16_t width, uint16_t height){
     uint16_t x_start =(( ILI9341_LCD_WIDTH - width)>>1);
     uint16_t x_end = x_start + width - 1;
 
