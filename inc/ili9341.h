@@ -332,11 +332,8 @@ BAD_ILI9341_DEF void ili9341_fill(uint16_t color)
     ili9341_deselect();
 }
 
-BAD_ILI9341_DEF void ili9341_fb_dma_fill(uint16_t* fb, uint16_t x_start, uint16_t y_start,uint16_t x_end,uint16_t y_end,uint16_t buff_size){
-    uint16_t width = (x_end - x_start )+1;
-    uint16_t length = (y_end - y_start)+1;
-    ILI9341_ASSERT(width*length< UINT16_MAX);
-    ILI9341_ASSERT( x_start < ILI9341_LCD_WIDTH && x_end < ILI9341_LCD_WIDTH && y_start < ILI9341_LCD_HEIGHT && y_end< ILI9341_LCD_HEIGHT);
+BAD_ILI9341_DEF ATTR_RAMFUNC void ili9341_fb_dma_fill(uint16_t* fb, uint16_t x_start, uint16_t y_start,uint16_t x_end,uint16_t y_end,uint16_t buff_size){
+
     nvic_enable_interrupt(ILI9341_NVIC_DMA_INTERRUPT);
     ili9341_send_cmd(0x2A); // column addr set
     ili9341_send_data(x_start>>8); 
