@@ -22,6 +22,31 @@ all: $(BUILD_DIR)
 clean:
 	rm -f $(BUILD_DIR)/*.elf
 
+
+.PHONY: debug
+debug: $(BIN)
+
+	@echo "Flashing $(BIN)..."
+	openocd -f /usr/share/openocd/scripts/interface/stlink.cfg \
+	-f /usr/share/openocd/scripts/target/stm32f4x.cfg \
+		-c "program $(BIN) reset exit"
+
+	@echo "Starting OpenOCD server..."
+	openocd -f /usr/share/openocd/scripts/interface/stlink.cfg \
+	-f /usr/share/openocd/scripts/target/stm32f4x.cfg & \
+	gf2 $(BIN) \
+		-ex "target remote localhost:3333" \
+		-ex "monitor reset halt" 
+	
+	pkill openocd
+
+flash: $(BIN)
+
+	@echo "Flashing $(BIN)..."
+	openocd -f /usr/share/openocd/scripts/interface/stlink.cfg \
+	-f /usr/share/openocd/scripts/target/stm32f4x.cfg \
+		-c "program $(BIN) reset exit"
+
 ###############
 # Build dir   #
 ###############
