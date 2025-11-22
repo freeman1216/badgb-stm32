@@ -16,6 +16,7 @@
 #include <stdint.h>
 
 #include "common.h"
+#include "scb.h"
 
 #ifdef BAD_HANDLERS_USE_UART
 
@@ -25,32 +26,7 @@
 #endif
 #define FAULT_LOG_UART_SETTINGS (USART_FEATURE_TRANSMIT_EN)
 #endif
-typedef struct
-{
-  __IO  uint32_t CPUID;                  
-  __IO  uint32_t ICSR;                   
-  __IO  uint32_t VTOR;                   
-  __IO  uint32_t AIRCR;                  
-  __IO  uint32_t SCR;                    
-  __IO  uint32_t CCR;                    
-  __IO  uint8_t  SHP[12U];               
-  __IO  uint32_t SHCSR;                  
-  __IO  uint32_t CFSR;                   
-  __IO  uint32_t HFSR;                   
-  __IO  uint32_t DFSR;                   
-  __IO  uint32_t MMFAR;                  
-  __IO  uint32_t BFAR;                   
-  __IO  uint32_t AFSR;                   
-  __IO  uint32_t PFR[2U];                
-  __IO  uint32_t DFR;                    
-  __IO  uint32_t ADR;                    
-  __IO  uint32_t MMFR[4U];               
-  __IO  uint32_t ISAR[5U];               
-        uint32_t RESERVED0[5U];
-  __IO  uint32_t CPACR;                  
-} SCB_typedef_t;
 
-#define SCB ((SCB_typedef_t *) 0xE000ED00UL)
 void __attribute__((naked)) isr_hardfault(){ 
     __asm volatile(
         "cpsid i        \n"
