@@ -101,20 +101,20 @@ typedef struct {
         uint8_t OBP_indeces[2][4];
         uint8_t BGP_indeces[4] ;
         uint8_t window_curr_line;
-        uint8_t frame_finished;
+        uint8_t frame;
 
     } display;
 
 
     struct {
-        uint8_t right;
-        uint8_t left;
-        uint8_t up;
-        uint8_t down;
-        uint8_t A;
-        uint8_t B;
-        uint8_t start;
-        uint8_t select;
+        volatile uint8_t right;
+        volatile uint8_t left;
+        volatile uint8_t up;
+        volatile uint8_t down;
+        volatile uint8_t A;
+        volatile uint8_t B;
+        volatile uint8_t start;
+        volatile uint8_t select;
     } buttons;
 } badstate_t;
 
