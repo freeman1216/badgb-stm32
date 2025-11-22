@@ -1,8 +1,9 @@
 #include "badstate.h"
 #include "timer.h"
+#include "common.h"
 #include "defines.h"
 
-void update_timer(uint16_t cycles) {
+void ATTR_RAMFUNC update_timer(uint16_t cycles) {
     
     
     // DIV register (always running)

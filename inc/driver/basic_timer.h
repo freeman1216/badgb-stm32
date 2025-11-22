@@ -63,7 +63,7 @@ BAD_TIMER_DEF void basic_timer_setup(BTIMER_typedef_t* TIM,uint16_t barr,uint16_
 void tim10_usr();
 #endif
 #define TIM_SR_UIF 0x1
-STRONG_ISR(tim1_up_tim10_isr){
+ATTR_RAMFUNC STRONG_ISR(tim1_up_tim10_isr){
     if(BTIM10->SR & TIM_SR_UIF ){
       BTIM10->SR &= ~TIM_SR_UIF;
 #ifdef BTIMER_USE_TIM10_USR

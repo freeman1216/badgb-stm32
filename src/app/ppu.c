@@ -23,7 +23,7 @@
 
 
 //internal function to draw a line of the bg to the fb
-static inline void __render_bg(){
+static inline ATTR_RAMFUNC void __render_bg(){
     uint8_t pix_y = badstate.io.LY + badstate.io.SCY;
     uint8_t tile_y = pix_y >> 3;
     uint8_t y_rem = pix_y & 0x07;
@@ -82,7 +82,7 @@ static inline void __render_bg(){
     }
 }
 //internal function to draw a line of the window to the fb
-static inline void __render_window(){
+static inline ATTR_RAMFUNC void __render_window(){
     uint16_t map_base;
     
     if((badstate.io.LCDC & LCDC_WINDOW_TILE_MAP_MASK) == 0){
@@ -156,7 +156,7 @@ typedef struct{
 
 
 //internal function to find a max of 10 sprites to render
-static inline void __insert_sprite(sprite_list_t* render_list, sprite_data_t* candidate){
+static inline ATTR_RAMFUNC void __insert_sprite(sprite_list_t* render_list, sprite_data_t* candidate){
     uint8_t pos = 0;
 
     for (; pos < render_list->sprite_count; pos++) {
@@ -191,7 +191,7 @@ static inline void __insert_sprite(sprite_list_t* render_list, sprite_data_t* ca
 }
 // internal function to render 1 line of sprites to the fb
 // finds 10 most prioritised sprites and renders them from least prioritised to most
-static inline void __render_sprites(){ 
+static inline ATTR_RAMFUNC void __render_sprites(){ 
     sprite_data_t *sprite_view =(sprite_data_t *)badstate.mem.oam;
     sprite_list_t list ;
     list.sprite_count = 0;
@@ -277,7 +277,7 @@ static inline void __render_sprites(){
 
 //renders the line to the framebuffer
 //midscanline effects doesnt work because of the nature of per scanline rendering
-static inline void render_line(){
+static inline ATTR_RAMFUNC void render_line(){
     
     if(badstate.io.LCDC & LCDC_BG_ENABLE_MASK){
         __render_bg();
@@ -294,7 +294,7 @@ static inline void render_line(){
     
 }
 
-static inline void check_ly_lyc() {
+static inline ATTR_RAMFUNC void check_ly_lyc() {
     if (badstate.io.LY == badstate.io.LYC) {
         badstate.io.STAT |= STAT_LYC_MASK; 
         if (badstate.io.STAT & STAT_LYC_INT_ENABLE_MASK) {
@@ -307,7 +307,7 @@ static inline void check_ly_lyc() {
 
 //function used to report the internal ppu state to actual registers
 //dont call this on fake vblank mode and disabled mode
-static inline void set_lcd_mode(ppu_mode_t mode) {
+static inline ATTR_RAMFUNC void set_lcd_mode(ppu_mode_t mode) {
     badstate.io.STAT = (badstate.io.STAT & ~0x03) | mode;
     badstate.ppu.mode = mode;
     
@@ -319,20 +319,20 @@ static inline void set_lcd_mode(ppu_mode_t mode) {
     }
 }
 
-void stop_ppu(){
+ATTR_RAMFUNC void stop_ppu(){
     badstate.ppu.mode = MODE_DISABLED;
     badstate.io.LY = 0;
     badstate.io.STAT &= ~(STAT_MODE_MASK | STAT_LYC_MASK);  // Clear mode and coincidence
 }
 
-void start_ppu(){
+ATTR_RAMFUNC void start_ppu(){
     badstate.ppu.mode = MODE2_OAM;
     badstate.ppu.mode_cycles = MODE2_OAM_CYCLES;
     set_lcd_mode(MODE2_OAM);
     check_ly_lyc();  // Need to check because LY was reset
 }
 
-static void hblank_handler(){
+static ATTR_RAMFUNC void hblank_handler(){
     if(++badstate.io.LY!=VISIBLE_SCANLINES){
         if(badstate.io.LY == VISIBLE_SCANLINES/2){
             while(!ili9341_poll_dma_ready());
@@ -351,7 +351,7 @@ static void hblank_handler(){
         badstate.ppu.mode_cycles = CYCLES_PER_SCANLINE;
         set_lcd_mode(MODE1_VBLANK);
         REQUEST_INTERRUPT(INTERRUPT_VBLANK);
-        badstate.display.frame_finished=1;
+        badstate.display.frame++;
         while(!ili9341_poll_dma_ready());
         ili9341_fb_dma_fill(badstate.display.pixels+(VISIBLE_SCANLINES/2 * PIXELS_PER_SCANLINE), 
             BAD_GB_SCREEN_X_START,
@@ -364,7 +364,7 @@ static void hblank_handler(){
    
 }
 
-static void vblank_handler(){
+static ATTR_RAMFUNC void vblank_handler(){
     if(++badstate.io.LY==TOTAL_SCANLINES){
         badstate.io.LY = 0;
         badstate.display.window_curr_line = 0;
@@ -379,20 +379,20 @@ static void vblank_handler(){
 }
 
 //mode in which ppu is after bootrom
-static void fake_vblank_hander(){
+static ATTR_RAMFUNC void fake_vblank_hander(){
     badstate.ppu.mode = MODE2_OAM;
     badstate.ppu.mode_cycles = MODE2_OAM_CYCLES-FAKE_VBLANK_CYCLES;
     check_ly_lyc(); //can fire right after bootrom
     set_lcd_mode(MODE2_OAM);
 }
 
-static void draw_handler(){
+static ATTR_RAMFUNC void draw_handler(){
     badstate.ppu.mode = MODE0_HBLANK;
     badstate.ppu.mode_cycles = MODE0_HBLANK_CYCLES;
     set_lcd_mode(MODE0_HBLANK);
 }
 
-static void oam_search_hander(){
+static ATTR_RAMFUNC void oam_search_hander(){
     badstate.ppu.mode = MODE3_DRAW;
     badstate.ppu.mode_cycles = MODE3_DRAW_CYCLES;
     set_lcd_mode(MODE3_DRAW);
@@ -408,7 +408,7 @@ static void (* const mode_change_handlers[])  (void) = {
 };
 
 //public stepping function 
-void update_ppu(uint16_t clocks){
+ATTR_RAMFUNC void update_ppu(uint16_t clocks){
 
     if(badstate.ppu.mode == MODE_DISABLED){
         return;

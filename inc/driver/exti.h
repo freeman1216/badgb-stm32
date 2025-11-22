@@ -48,7 +48,7 @@ typedef enum {
 
 #define EXTI_BASE   (0x40013C00UL)
 #define EXTI        ((__IO EXTI_typedef_t *)EXTI_BASE)
-BAD_EXTI_DEF void exti_configure_line(uint8_t line, EXTI_trigger_t trigger);
+BAD_EXTI_DEF ATTR_RAMFUNC void exti_configure_line(uint8_t line, EXTI_trigger_t trigger);
 #ifdef BAD_EXTI_IMPLEMENTATION
 
 BAD_EXTI_DEF void exti_configure_line(uint8_t line, EXTI_trigger_t trigger)
@@ -72,11 +72,11 @@ BAD_EXTI_DEF void exti_configure_line(uint8_t line, EXTI_trigger_t trigger)
 
 #ifdef BAD_EXTI_EXTI0_ISR_IMPLEMENTATION
 
-void exti0_usr();
+ATTR_RAMFUNC void exti0_usr();
 
 #define EXTI_PR_EXTI0 (0x1)
 
-STRONG_ISR(exti0_isr){
+ATTR_RAMFUNC STRONG_ISR(exti0_isr){
     EXTI->PR = EXTI_PR_EXTI0;
     exti0_usr();
 }
@@ -85,11 +85,11 @@ STRONG_ISR(exti0_isr){
 
 #ifdef BAD_EXTI_EXTI1_ISR_IMPLEMENTATION
 
-void exti1_usr();
+ATTR_RAMFUNC void exti1_usr();
 
 #define EXTI_PR_EXTI1 (0x2)
 
-STRONG_ISR(exti1_isr){
+ATTR_RAMFUNC STRONG_ISR(exti1_isr){
     EXTI->PR = EXTI_PR_EXTI1;
     exti1_usr();
 }
@@ -98,11 +98,11 @@ STRONG_ISR(exti1_isr){
 
 #ifdef BAD_EXTI_EXTI2_ISR_IMPLEMENTATION
 
-void exti2_usr();
+ATTR_RAMFUNC void exti2_usr();
 
 #define EXTI_PR_EXTI2 (0x4)
 
-STRONG_ISR(exti2_isr){
+ATTR_RAMFUNC STRONG_ISR(exti2_isr){
     EXTI->PR = EXTI_PR_EXTI2;
     exti2_usr();
 }
@@ -111,11 +111,11 @@ STRONG_ISR(exti2_isr){
 
 #ifdef BAD_EXTI_EXTI3_ISR_IMPLEMENTATION
 
-void exti3_usr();
+ATTR_RAMFUNC void exti3_usr();
 
 #define EXTI_PR_EXTI3 (0x8)
 
-STRONG_ISR(exti3_isr){
+ATTR_RAMFUNC STRONG_ISR(exti3_isr){
     EXTI->PR = EXTI_PR_EXTI3;
     exti3_usr();
 }
@@ -124,11 +124,11 @@ STRONG_ISR(exti3_isr){
 
 #ifdef BAD_EXTI_EXTI4_ISR_IMPLEMENTATION
 
-void exti4_usr();
+ATTR_RAMFUNC void exti4_usr();
 
 #define EXTI_PR_EXTI4 (0x10)
 
-STRONG_ISR(exti4_isr){
+ATTR_RAMFUNC STRONG_ISR(exti4_isr){
     EXTI->PR = EXTI_PR_EXTI4;
     exti4_usr();
 }
@@ -137,24 +137,24 @@ STRONG_ISR(exti4_isr){
 #ifdef BAD_EXTI_EXTI9_5_ISR_IMPLEMENTATION
 
 #ifdef BAD_EXTI_USE_EXTI_5_USER_ISR
-void exti5_usr();
+ATTR_RAMFUNC void exti5_usr();
 #endif
 #ifdef BAD_EXTI_USE_EXTI_6_USER_ISR
-void exti6_usr();
+ATTR_RAMFUNC void exti6_usr();
 #endif
 #ifdef BAD_EXTI_USE_EXTI_7_USER_ISR
-void exti7_usr();
+ATTR_RAMFUNC void exti7_usr();
 #endif
 #ifdef BAD_EXTI_USE_EXTI_8_USER_ISR
-void exti8_usr();
+ATTR_RAMFUNC void exti8_usr();
 #endif
 #ifdef BAD_EXTI_USE_EXTI_9_USER_ISR
-void exti9_usr();
+ATTR_RAMFUNC void exti9_usr();
 #endif
 
 #define EXTI_PR_EXTI9_5_mask (0x3E0)
 
-STRONG_ISR(exti9_5_isr){
+ATTR_RAMFUNC STRONG_ISR(exti9_5_isr){
     enum EXTI9_5_masks{
         EXTI_PR_EXTI5 = 0x20,
         EXTI_PR_EXTI6 = 0x40,

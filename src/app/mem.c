@@ -1,5 +1,6 @@
 #include <stdint.h>
 
+#include "common.h"
 #include "uart.h"
 
 #include "mem.h"
@@ -8,11 +9,11 @@
 #include "ppu.h"
 #include "rom.h"
 
-static void inline io_write(uint16_t addr, uint8_t val);
-static uint8_t inline io_read(uint16_t addr);
+static ATTR_RAMFUNC void inline io_write(uint16_t addr, uint8_t val);
+static ATTR_RAMFUNC uint8_t inline io_read(uint16_t addr);
 
 
-uint8_t mem_read_byte(uint16_t addr){
+ATTR_RAMFUNC uint8_t mem_read_byte(uint16_t addr){
 
     switch (addr>>12) {
         case 0x0:
@@ -75,19 +76,19 @@ uint8_t mem_read_byte(uint16_t addr){
     return 0;
 };
 //TODO get rid of this 
-uint16_t mem_read_word(uint16_t addr) {
+ATTR_RAMFUNC uint16_t mem_read_word(uint16_t addr) {
     uint8_t low = mem_read_byte(addr);
     uint8_t high = mem_read_byte(addr + 1);
     return (uint16_t)(low) | ((uint16_t)(high) << 8);
 }
 
-void mem_init(){
+ATTR_RAMFUNC void mem_init(){
     badstate.mem.rom0 = rom;
     badstate.mem.romx = rom+ROM0_SIZE;
     badstate.mem.currentromx = 1;
 }
 
-void handle_bank_switch(uint8_t value) {
+ATTR_RAMFUNC void handle_bank_switch( uint8_t value) {
     
     uint8_t bank = value & 0x1F;  
     if(bank == 0) {
@@ -97,7 +98,7 @@ void handle_bank_switch(uint8_t value) {
      
 }
 
-void mem_write_byte(uint16_t addr, uint8_t val){
+ATTR_RAMFUNC void mem_write_byte(uint16_t addr, uint8_t val){
   switch (addr>>12) {
         case 0x0:
         case 0x1:
@@ -163,7 +164,7 @@ void mem_write_byte(uint16_t addr, uint8_t val){
     
 }
 //TODO get rid of this 
-void mem_write_word(uint16_t addr, uint16_t value){
+ATTR_RAMFUNC void mem_write_word(uint16_t addr, uint16_t value){
     
     mem_write_byte(addr, value & 0xFF);         // write low byte
     mem_write_byte(addr + 1, (value >> 8) & 0xFF); // write high byte
@@ -171,7 +172,7 @@ void mem_write_word(uint16_t addr, uint16_t value){
 }
 
 
-static void  inline io_write(uint16_t addr, uint8_t val) {
+static ATTR_RAMFUNC void  inline io_write(uint16_t addr, uint8_t val) {
     switch (addr) {
         // Joypad
         case 0xFF00: 
@@ -253,7 +254,7 @@ static void  inline io_write(uint16_t addr, uint8_t val) {
         default: break; 
     }
 }
-static inline uint8_t read_joypad() {
+static inline ATTR_RAMFUNC uint8_t read_joypad() {
     uint8_t result = 0xF;  // Default: no buttons pressed
     
     // Check direction buttons (if P1.4=0)
@@ -276,19 +277,19 @@ static inline uint8_t read_joypad() {
 }
 
 
-void flag_joypad_interrupt_buttons(){
+ATTR_RAMFUNC void flag_joypad_interrupt_buttons(){
     if((badstate.io.P1 & JOYP_BUTTONS) ^ JOYP_BUTTONS){
         REQUEST_INTERRUPT(INTERRUPT_JOYPAD);
     }
 }
 
-void flag_joypad_interrupt_dpad(){
+ATTR_RAMFUNC void flag_joypad_interrupt_dpad(){
     if((badstate.io.P1 & JOYP_DPAD) ^ JOYP_DPAD){
         REQUEST_INTERRUPT(INTERRUPT_JOYPAD);
     }
 }
 
-static uint8_t inline io_read(uint16_t addr) {
+static ATTR_RAMFUNC uint8_t inline io_read(uint16_t addr) {
     switch (addr) {
         // Joypad
         case 0xFF00: return read_joypad();

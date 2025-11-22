@@ -64,7 +64,7 @@
 #include "badstate.h"
 #include "cpu_instr.h"
 
-static inline void opcodes_cb(uint8_t postfix){
+static inline ATTR_RAMFUNC void opcodes_cb(uint8_t postfix){
     switch (postfix) {
         case 0x00:  { //RLC B
             RLC_R8(b);
@@ -1164,7 +1164,7 @@ static inline void opcodes_cb(uint8_t postfix){
     }
 } 
 
-static void opcodes(uint8_t opcode){
+static ATTR_RAMFUNC void opcodes(uint8_t opcode){
     switch (opcode) {
         case 0x00:{// NOP
             
@@ -2774,7 +2774,7 @@ static void opcodes(uint8_t opcode){
         case 0xF4: {
             //ILLEGAL OPCODE
             UNHANDLED_OPCODE();
-        }
+       }
         
         case 0xF5: { // PUSH AF
             badstate.cpu.sp--;
@@ -2877,7 +2877,7 @@ static void opcodes(uint8_t opcode){
     }   
 }
 
-static inline void handle_interrupt() {
+static inline ATTR_RAMFUNC void handle_interrupt() {
     uint8_t pending = badstate.io.if_reg & badstate.io.ie & 0x1F;
     
     if (!pending){
@@ -2920,7 +2920,7 @@ static inline void handle_interrupt() {
 }
 
 
-void update_cpu(){
+ATTR_RAMFUNC void update_cpu(){
     handle_interrupt();
     
     if(badstate.cpu.ime_pending==1){

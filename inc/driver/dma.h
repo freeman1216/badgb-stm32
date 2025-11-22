@@ -170,7 +170,7 @@ ALWAYS_INLINE void dma_clear_interrupts(__IO DMA_typedef_t * DMA,DMA_stream_num_
     }
 }
 
-ALWAYS_INLINE uint8_t dma_stream_n_poll_ready(__IO DMA_typedef_t * DMA,DMA_stream_num_t stream){
+ALWAYS_INLINE ATTR_RAMFUNC uint8_t dma_stream_n_poll_ready(__IO DMA_typedef_t * DMA,DMA_stream_num_t stream){
     return DMA->streams[stream].NDTR == 0;
 }
 
@@ -185,7 +185,7 @@ ALWAYS_INLINE void dma_start_transfer(__IO DMA_typedef_t * DMA, DMA_stream_num_t
     DMA->streams[stream].CR |= CR_EN_MASK;
 }
 
-BAD_DMA_DEF void dma_setup_transfer(__IO DMA_typedef_t * DMA, 
+BAD_DMA_DEF ATTR_RAMFUNC void dma_setup_transfer(__IO DMA_typedef_t * DMA, 
     DMA_stream_num_t stream,
     DMA_channel_num_t channel,volatile uint32_t mem,
     uint16_t bufflen,
@@ -198,7 +198,7 @@ BAD_DMA_DEF void dma_setup_transfer(__IO DMA_typedef_t * DMA,
 
 #ifdef BAD_DMA_IMPLEMENTATION
 
-BAD_DMA_DEF void dma_setup_transfer(__IO DMA_typedef_t * DMA, DMA_stream_num_t stream,DMA_channel_num_t channel,volatile uint32_t mem,uint16_t bufflen,uint32_t periph, DMA_interrupts_t interrupts, DMA_features_t features,DMA_fifo_settings_t fifo_settings){
+BAD_DMA_DEF ATTR_RAMFUNC void dma_setup_transfer(__IO DMA_typedef_t * DMA, DMA_stream_num_t stream,DMA_channel_num_t channel,volatile uint32_t mem,uint16_t bufflen,uint32_t periph, DMA_interrupts_t interrupts, DMA_features_t features,DMA_fifo_settings_t fifo_settings){
     DMA->streams[stream].CR &= ~(CR_EN_MASK);
     while(DMA->streams[stream].CR & CR_EN_MASK);
     dma_clear_interrupts(DMA, stream, DMA_clear_all);
@@ -236,7 +236,7 @@ void dma2_stream2_ht(uint16_t offset);
 #endif
 
 
-STRONG_ISR(dma2_stream2_isr){
+ATTR_RAMFUNC STRONG_ISR(dma2_stream2_isr){
     enum DMA_Stream2_flag_LISR {
         DMA_Stream2_frame_error  = (1UL << 16UL),
         DMA_Stream2_direct_mode_error= (1UL << 18UL),

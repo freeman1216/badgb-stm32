@@ -107,42 +107,42 @@ typedef enum{
 #define SPI_SR_RXNE_MASK    (0x1)
 #define SPI_SR_TXE_MASK     (0x2)
 
-ALWAYS_INLINE void spi_enable_interrupts(__IO SPI_typedef_t* SPI,SPI_interrupt_t interrupts){
+ALWAYS_INLINE ATTR_RAMFUNC void spi_enable_interrupts(__IO SPI_typedef_t* SPI,SPI_interrupt_t interrupts){
     SPI->CR2 |= interrupts;
 }
 
-ALWAYS_INLINE void spi_disable_interrupts(__IO SPI_typedef_t* SPI,SPI_interrupt_t interrupts){
+ALWAYS_INLINE ATTR_RAMFUNC void spi_disable_interrupts(__IO SPI_typedef_t* SPI,SPI_interrupt_t interrupts){
     SPI->CR2 &= ~(interrupts);
 }
 
-ALWAYS_INLINE void spi_enable_misc(__IO SPI_typedef_t* SPI, SPI_misc_t misc){ //call this only when spi is disabled
+ALWAYS_INLINE ATTR_RAMFUNC void spi_enable_misc(__IO SPI_typedef_t* SPI, SPI_misc_t misc){ //call this only when spi is disabled
     SPI->CR2 |= misc;
 }
 
-ALWAYS_INLINE void spi_disable_misc(__IO SPI_typedef_t* SPI, SPI_misc_t misc){ //call this only when spi is disabled
+ALWAYS_INLINE ATTR_RAMFUNC void spi_disable_misc(__IO SPI_typedef_t* SPI, SPI_misc_t misc){ //call this only when spi is disabled
     SPI->CR2 &= ~misc;
 }
 
-ALWAYS_INLINE void spi_setup(__IO SPI_typedef_t* SPI, SPI_feature_t features,SPI_misc_t misc, SPI_interrupt_t interrupts){
+ALWAYS_INLINE ATTR_RAMFUNC void spi_setup(__IO SPI_typedef_t* SPI, SPI_feature_t features,SPI_misc_t misc, SPI_interrupt_t interrupts){
     SPI->CR1 = features;
     SPI->CR2 = misc | interrupts;
 }
 
-BAD_SPI_DEF void spi_enable(__IO SPI_typedef_t* SPI);
-BAD_SPI_DEF void spi_disable(__IO SPI_typedef_t* SPI);
+BAD_SPI_DEF ATTR_RAMFUNC void spi_enable(__IO SPI_typedef_t* SPI);
+BAD_SPI_DEF ATTR_RAMFUNC void spi_disable(__IO SPI_typedef_t* SPI);
 BAD_SPI_DEF uint8_t spi_transmit_recieve(__IO SPI_typedef_t *SPI, uint8_t data);
-BAD_SPI_DEF void spi_transmit_only(__IO SPI_typedef_t *SPI, uint8_t data);
+BAD_SPI_DEF ATTR_RAMFUNC void spi_transmit_only(__IO SPI_typedef_t *SPI, uint8_t data);
 
 #ifdef BAD_SPI_IMPLEMENTATION
 
 
-BAD_SPI_DEF void spi_enable(__IO SPI_typedef_t* SPI){
+BAD_SPI_DEF ATTR_RAMFUNC void spi_enable(__IO SPI_typedef_t* SPI){
     SPI->CR1 |= SPI_CR1_SPIEN_MASK;
     while (!(SPI->CR1 & SPI_CR1_SPIEN_MASK));
     while (SPI->SR & SPI_SR_BSY_MASK); 
 }
 
-BAD_SPI_DEF void spi_disable(__IO SPI_typedef_t* SPI){
+BAD_SPI_DEF ATTR_RAMFUNC void spi_disable(__IO SPI_typedef_t* SPI){
     while (SPI->SR & SPI_SR_BSY_MASK); 
     SPI->CR1 &= ~(SPI_CR1_SPIEN_MASK);
     while (SPI->CR1 & SPI_CR1_SPIEN_MASK); 
@@ -155,7 +155,7 @@ BAD_SPI_DEF uint8_t spi_transmit_recieve(__IO SPI_typedef_t *SPI, uint8_t data){
     return SPI->DR;
 } 
 
-BAD_SPI_DEF void spi_transmit_only(__IO SPI_typedef_t *SPI, uint8_t data){;     
+BAD_SPI_DEF ATTR_RAMFUNC void spi_transmit_only(__IO SPI_typedef_t *SPI, uint8_t data){;     
     SPI->DR = data;
     while (!(SPI->SR & SPI_SR_BSY_MASK));
     while (SPI->SR & SPI_SR_BSY_MASK); 
@@ -166,7 +166,7 @@ BAD_SPI_DEF void spi_transmit_only(__IO SPI_typedef_t *SPI, uint8_t data){;
 #ifdef BAD_SPI_SPI1_ISR_IMPLEMENTATION
 
 #ifdef BAD_SPI_SPI1_USE_RXNE
-void spi1_rx_isr(uint16_t data);
+ATTR_RAMFUNC void spi1_rx_isr(uint16_t data);
 #endif
 
 STRONG_ISR(spi1_isr){

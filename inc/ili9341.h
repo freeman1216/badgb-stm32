@@ -104,33 +104,33 @@
 #define ILI9341_LCD_HEIGHT              (320)
 #define ILI9341_LCD_WIDTH               (240)
 
-BAD_ILI9341_DEF void ili9341_init(void);
-BAD_ILI9341_DEF void ili9341_fill(uint16_t color);
-BAD_ILI9341_DEF void ili9341_fb_dma_fill_centered(uint16_t* fb, uint16_t width, uint16_t height);
-BAD_ILI9341_DEF void ili9341_fb_dma_fill(uint16_t* fb, uint16_t x_start, uint16_t y_start,uint16_t x_end,uint16_t y_end,uint16_t buff_size);
+BAD_ILI9341_DEF ATTR_RAMFUNC void ili9341_init();
+BAD_ILI9341_DEF ATTR_RAMFUNC void ili9341_fill(uint16_t color);
+BAD_ILI9341_DEF ATTR_RAMFUNC void ili9341_fb_dma_fill_centered(uint16_t* fb, uint16_t width, uint16_t height);
+BAD_ILI9341_DEF ATTR_RAMFUNC void ili9341_fb_dma_fill(uint16_t* fb, uint16_t x_start, uint16_t y_start,uint16_t x_end,uint16_t y_end,uint16_t buff_size);
 BAD_ILI9341_DEF uint8_t ili9341_poll_dma_ready();
 
 
 #ifdef BAD_ILI9341_IMPLEMENTATION
 
-ALWAYS_INLINE void ili9341_spi_fb_transmition_mode(){
+ALWAYS_INLINE ATTR_RAMFUNC void ili9341_spi_fb_transmition_mode(){
     spi_disable(ILI9341_SPI);
     spi_setup(ILI9341_SPI,ILI9341_SPI_FEATURES_DMA,0,0);
     spi_enable(ILI9341_SPI);
 }
 
-ALWAYS_INLINE void ili9341_spi_control_transmition_mode(){
+ALWAYS_INLINE ATTR_RAMFUNC void ili9341_spi_control_transmition_mode(){
     spi_disable(ILI9341_SPI);;
     spi_setup(ILI9341_SPI,ILI9341_SPI_FEATURES_CMD,0,0);
     spi_enable(ILI9341_SPI);
 }
 
-ALWAYS_INLINE void ili9341_select(void)     { io_pin_reset(ILI9341_GPIO_PORT, ILI9341_CS_PIN); }
-ALWAYS_INLINE void ili9341_deselect(void)   { io_pin_set(ILI9341_GPIO_PORT, ILI9341_CS_PIN); }
-ALWAYS_INLINE void ili9341_enable(void)     { io_pin_set(ILI9341_GPIO_PORT, ILI9341_RESET_PIN); }
-ALWAYS_INLINE void ili9341_disable(void)    { io_pin_reset(ILI9341_GPIO_PORT, ILI9341_RESET_PIN); }
-ALWAYS_INLINE void ili9341_dc_command(void) { io_pin_reset(ILI9341_GPIO_PORT, ILI9341_DC_PIN); }
-ALWAYS_INLINE void ili9341_dc_data(void)    { io_pin_set(ILI9341_GPIO_PORT, ILI9341_DC_PIN); }
+ALWAYS_INLINE ATTR_RAMFUNC void ili9341_select()     { io_pin_reset(ILI9341_GPIO_PORT, ILI9341_CS_PIN); }
+ALWAYS_INLINE ATTR_RAMFUNC void ili9341_deselect()   { io_pin_set(ILI9341_GPIO_PORT, ILI9341_CS_PIN); }
+ALWAYS_INLINE ATTR_RAMFUNC void ili9341_enable()     { io_pin_set(ILI9341_GPIO_PORT, ILI9341_RESET_PIN); }
+ALWAYS_INLINE ATTR_RAMFUNC void ili9341_disable()    { io_pin_reset(ILI9341_GPIO_PORT, ILI9341_RESET_PIN); }
+ALWAYS_INLINE ATTR_RAMFUNC void ili9341_dc_command() { io_pin_reset(ILI9341_GPIO_PORT, ILI9341_DC_PIN); }
+ALWAYS_INLINE ATTR_RAMFUNC void ili9341_dc_data()    { io_pin_set(ILI9341_GPIO_PORT, ILI9341_DC_PIN); }
 
 #ifdef BAD_ILI9341_INCLUDE_ISRS
 
@@ -142,7 +142,7 @@ STRONG_USER_ISR(dma2_stream2_tc,uint16_t offset){
 #endif
 
 
-ALWAYS_INLINE void ili9341_spi_init(){
+ALWAYS_INLINE ATTR_RAMFUNC void ili9341_spi_init(){
     spi_setup(ILI9341_SPI, ILI9341_SPI_FEATURES_CMD,0, 0);
     spi_enable(ILI9341_SPI);
 }
@@ -150,14 +150,14 @@ ALWAYS_INLINE void ili9341_spi_init(){
 
 
 
-ALWAYS_INLINE void ili9341_spi_start_dma(){
+ALWAYS_INLINE ATTR_RAMFUNC void ili9341_spi_start_dma(){
     dma_start_transfer(ILI9341_DMA, ILI9341_DMA_STREAM);
     spi_enable_misc(ILI9341_SPI, SPI_MISC_ENABLE_DMA_TX);
 }
 
 
 
-ALWAYS_INLINE void ili9341_send_cmd(uint8_t cmd)
+ALWAYS_INLINE ATTR_RAMFUNC void ili9341_send_cmd(uint8_t cmd)
 {
     ili9341_select();
     ili9341_dc_command();
@@ -165,7 +165,7 @@ ALWAYS_INLINE void ili9341_send_cmd(uint8_t cmd)
     ili9341_deselect();
 }
 
-ALWAYS_INLINE void ili9341_send_data(uint8_t data)
+ALWAYS_INLINE ATTR_RAMFUNC void ili9341_send_data(uint8_t data)
 {   
     
     ili9341_select();
@@ -174,11 +174,11 @@ ALWAYS_INLINE void ili9341_send_data(uint8_t data)
     ili9341_deselect();
 }
 
-BAD_ILI9341_DEF uint8_t ili9341_poll_dma_ready(){
+BAD_ILI9341_DEF ATTR_RAMFUNC  uint8_t ili9341_poll_dma_ready(){
     return dma_stream_n_poll_ready(ILI9341_DMA, ILI9341_DMA_STREAM);
 }
 
-BAD_ILI9341_DEF void ili9341_init(void)
+BAD_ILI9341_DEF ATTR_RAMFUNC void ili9341_init()
 {
     ili9341_enable();
 
@@ -313,7 +313,7 @@ BAD_ILI9341_DEF void ili9341_init(void)
 }
 
 // ==== Example helper: fill screen ====
-BAD_ILI9341_DEF void ili9341_fill(uint16_t color)
+BAD_ILI9341_DEF ATTR_RAMFUNC void ili9341_fill(uint16_t color)
 {
     ili9341_send_cmd(0x2A); // column addr set
     ili9341_send_data(0x0); ili9341_send_data(0x00);
@@ -361,7 +361,7 @@ BAD_ILI9341_DEF ATTR_RAMFUNC void ili9341_fb_dma_fill(uint16_t* fb, uint16_t x_s
     
 }
 
-BAD_ILI9341_DEF void ili9341_fb_dma_fill_centered(uint16_t* fb, uint16_t width, uint16_t height){
+BAD_ILI9341_DEF ATTR_RAMFUNC void ili9341_fb_dma_fill_centered(uint16_t* fb, uint16_t width, uint16_t height){
     uint16_t x_start =(( ILI9341_LCD_WIDTH - width)>>1);
     uint16_t x_end = x_start + width - 1;
 
