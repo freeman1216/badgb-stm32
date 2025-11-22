@@ -121,6 +121,9 @@ typedef enum{
     USART_MISC_DMA_TRANSMIT = 0x80
 }USART_misc_t;
 
+BAD_USART_DEF void uart_enable(__IO USART_typedef_t* USART);
+
+BAD_USART_DEF void uart_disable(__IO USART_typedef_t * USART);
 
 ALWAYS_INLINE void uart_enable_misc(__IO USART_typedef_t * USART , USART_misc_t misc){
     USART->CR3 |= misc;

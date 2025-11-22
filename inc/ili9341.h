@@ -107,7 +107,7 @@
 BAD_ILI9341_DEF void ili9341_init(void);
 BAD_ILI9341_DEF void ili9341_fill(uint16_t color);
 BAD_ILI9341_DEF void ili9341_fb_dma_fill_centered(uint16_t* fb, uint16_t width, uint16_t height);
-BAD_ILI9341_DEF void ili9341_fb_dma_fill(uint16_t* fb, uint16_t x_start, uint16_t y_start,uint16_t x_end,uint16_t y_end);
+BAD_ILI9341_DEF void ili9341_fb_dma_fill(uint16_t* fb, uint16_t x_start, uint16_t y_start,uint16_t x_end,uint16_t y_end,uint16_t buff_size);
 BAD_ILI9341_DEF uint8_t ili9341_poll_dma_ready();
 
 
@@ -305,11 +305,11 @@ BAD_ILI9341_DEF void ili9341_init(void)
 
 //EXIT SLEEP
     ili9341_send_cmd(0x11);
-    for (volatile int i = 0; i< 120000; i++);
+    for (volatile int i = 0; i< 150000; i++);
     
     //TURN ON DISPLAY   
     ili9341_send_cmd(0x29);
-    for (volatile int i = 0; i< 10000; i++);
+    for (volatile int i = 0; i< 100000; i++);
 }
 
 // ==== Example helper: fill screen ====
@@ -332,12 +332,11 @@ BAD_ILI9341_DEF void ili9341_fill(uint16_t color)
     ili9341_deselect();
 }
 
-BAD_ILI9341_DEF void ili9341_fb_dma_fill(uint16_t* fb, uint16_t x_start, uint16_t y_start,uint16_t x_end,uint16_t y_end){
+BAD_ILI9341_DEF void ili9341_fb_dma_fill(uint16_t* fb, uint16_t x_start, uint16_t y_start,uint16_t x_end,uint16_t y_end,uint16_t buff_size){
     uint16_t width = (x_end - x_start )+1;
-    uint16_t length = (y_end -y_start)+1;
+    uint16_t length = (y_end - y_start)+1;
     ILI9341_ASSERT(width*length< UINT16_MAX);
     ILI9341_ASSERT( x_start < ILI9341_LCD_WIDTH && x_end < ILI9341_LCD_WIDTH && y_start < ILI9341_LCD_HEIGHT && y_end< ILI9341_LCD_HEIGHT);
-    uint16_t buff_len = width*length;
     nvic_enable_interrupt(ILI9341_NVIC_DMA_INTERRUPT);
     ili9341_send_cmd(0x2A); // column addr set
     ili9341_send_data(x_start>>8); 
@@ -354,7 +353,7 @@ BAD_ILI9341_DEF void ili9341_fb_dma_fill(uint16_t* fb, uint16_t x_start, uint16_
     dma_setup_transfer(ILI9341_DMA, 
         ILI9341_DMA_STREAM, 
         ILI9341_DMA_CHANNEL, 
-        (uint32_t)fb, buff_len,
+        (uint32_t)fb, buff_size,
         (uint32_t)&ILI9341_SPI->DR ,
         DMA_enable_TC, 
         ILI9341_DMA_SETTINGS_FB,

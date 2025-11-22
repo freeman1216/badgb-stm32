@@ -92,10 +92,12 @@
 #define SERIAL_VECTOR      (0x0058)
 #define JOYPAD_VECTOR      (0x0060)
 //Logging macro
-#define BADLOG(fmt, ...) \
+#define BADLOG_UART USART1
+#define BADLOG(x) \
     do { \
-        fprintf(stderr, "[LOG] "); \
-        fprintf(stderr, fmt, ##__VA_ARGS__); \
+        uart_send_str_polling(BADLOG_UART ,"LOG:");\
+        uart_send_str_polling(BADLOG_UART ,x);\
+        uart_send_str_polling(BADLOG_UART ,"\r\n");\
     } while (0)
 
 #endif 

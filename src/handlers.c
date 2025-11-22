@@ -62,7 +62,7 @@ void __attribute__((naked)) isr_hardfault(){
     );
 }
 
-void hardfault_c(uint32_t* stack){
+void __attribute__((used)) hardfault_c(uint32_t* stack){
     volatile uint32_t r0  = stack[0];
     volatile uint32_t r1  = stack[1];
     volatile uint32_t r2  = stack[2];

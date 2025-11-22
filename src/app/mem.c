@@ -1,28 +1,16 @@
 #include <stdint.h>
-#include <stdio.h>
+
+#include "uart.h"
 
 #include "mem.h"
 #include "defines.h"
 #include "badstate.h"
 #include "ppu.h"
+#include "rom.h"
 
 static void inline io_write(uint16_t addr, uint8_t val);
 static uint8_t inline io_read(uint16_t addr);
 
-uint8_t mem_init(FILE* rom){
-    uint64_t res =fread(badstate.mem.rom0,1,ROM0_SIZE,rom);
-    if(res != ROM0_SIZE) {
-        BADLOG("Bank 0 read incomplete! (%zu/%d bytes)\n", res, ROMX_SIZE);
-        return -1;
-    }
-    res = fread(badstate.mem.romx,1 , ROMX_SIZE, rom);
-    if(res != ROMX_SIZE) {
-        BADLOG("Bank 1 read incomplete! (%zu/%d bytes)\n", res, ROMX_SIZE);
-        return -1;
-    }
-    badstate.mem.rom = rom;
-    return 0;
-}
 
 uint8_t mem_read_byte(uint16_t addr){
 
@@ -93,26 +81,20 @@ uint16_t mem_read_word(uint16_t addr) {
     return (uint16_t)(low) | ((uint16_t)(high) << 8);
 }
 
+void mem_init(){
+    badstate.mem.rom0 = rom;
+    badstate.mem.romx = rom+ROM0_SIZE;
+    badstate.mem.currentromx = 1;
+}
+
 void handle_bank_switch(uint8_t value) {
     
     uint8_t bank = value & 0x1F;  
-    if(bank == 0) bank = 1;
-    
-
-    if(bank != badstate.mem.currentromx) {
-        if(fseek(badstate.mem.rom, ROMX_SIZE * (bank), SEEK_SET) != 0) {
-            BADLOG("Bank seek failed!\n");
-            return;
-        }
-        
-        size_t read = fread(badstate.mem.romx, 1, ROMX_SIZE, badstate.mem.rom);
-        if(read != ROMX_SIZE) {
-            BADLOG("Bank read incomplete! (%zu/%d bytes)\n", read, ROMX_SIZE);
-        }
-        
-        badstate.mem.currentromx = bank;
-       // badLOG("Switched to ROM bank %d\n", bank);
+    if(bank == 0) {
+        bank = 1;
     }
+    badstate.mem.romx = rom + ROM0_SIZE * bank;
+     
 }
 
 void mem_write_byte(uint16_t addr, uint8_t val){
@@ -198,8 +180,6 @@ static void  inline io_write(uint16_t addr, uint8_t val) {
             
         // Serial (for testing with roms that write to it)
         case 0xFF01: {
-            badstate.io.SB = val;
-            BADLOG("%c",val);
             break;
         }
         case 0xFF02: badstate.io.SC = val & 0x83; break; // Only bits 0-1,7 writable

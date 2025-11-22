@@ -4,13 +4,12 @@
 
 #include <stdint.h>
 
-#include "stdio.h"
 
 uint8_t mem_read_byte(uint16_t);
 uint16_t mem_read_word(uint16_t);
 void mem_write_byte(uint16_t,uint8_t);
 void mem_write_word(uint16_t,uint16_t);
-uint8_t mem_init(FILE*);
+void mem_init();
 
 typedef enum{
     JOYP_DPAD = 0x10,

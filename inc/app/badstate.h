@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "defines.h"
 #include "ppu.h"
-#include "stdio.h"
+
 
 typedef struct {
     // CPU Core
@@ -46,13 +46,11 @@ typedef struct {
     // Memory
     struct {
         // ROM/RAM 
-        uint8_t rom0[ROM0_SIZE];
-        uint8_t romx[ROMX_SIZE];
-        uint8_t currentromx;
-        FILE* rom ;         
+        const uint8_t *rom0;
+        const uint8_t  *romx;
+        uint8_t currentromx;         
         uint8_t wram[WRAM0_SIZE+WRAMX_SIZE]; // 8KB Work RAM
         uint8_t hram[HRAM_SIZE];    // High RAM
-        
         
         // Graphics
         uint8_t vram[VRAM_SIZE]; // VRAM
@@ -98,7 +96,7 @@ typedef struct {
     } ppu;
 
     struct{
-        uint16_t pixels[VISIBLE_SCANLINES][PIXELS_PER_SCANLINE];
+        uint16_t pixels[VISIBLE_SCANLINES * PIXELS_PER_SCANLINE];
         uint16_t palette[4];
         uint8_t OBP_indeces[2][4];
         uint8_t BGP_indeces[4] ;

@@ -1,8 +1,7 @@
+#include "mem.h"
 #include <stdint.h>
 
-#include "common.h"
-#include "nvic.h"
-
+//Driver includes
 #define BAD_RCC_IMPLEMENTATION
 #include "rcc.h"
 #include "flash.h"
@@ -10,6 +9,19 @@
 #define BAD_IO_IMPLEMENTATION
 #include "io.h"
 
+#define BAD_USART_IMPLEMENTATION
+#include "uart.h"
+
+#define BAD_ILI9341_STATIC
+#define BAD_ILI9341_IMPLEMENTATION
+#include "ili9341.h"
+
+//emulator includes
+#include "cpu.h"
+#include "timer.h"
+#include "badstate.h"
+#include "common.h"
+#include "ppu.h"
 
 #define UART_GPIO_PORT          (GPIOA)
 #define UART1_TX_PIN            (9)
@@ -33,20 +45,10 @@
 #define EXTI1_GPIO_PORT (GPIOB)
 #define EXTI1_PIN       (1)
 
-#define BAD_USART_IMPLEMENTATION
-#include "uart.h"
-#define BAD_ASSERT_IMPLEMENTATION
-#define BAD_ILI9341_STATIC
-#define BAD_ILI9341_INCLUDE_ISRS
-#define BAD_ILI9341_IMPLEMENTATION
-#define BAD_ILI9431_USE_ASSERT
-#include "ili9341.h"
 
 
 #define EXTI_PORT   (SYSCFG_PBx)
 #define EXTI_PIN    (1)
-
-uint16_t random_bitmap[240*240];
 
     // HSE  = 25
     // PLLM = 25
@@ -61,7 +63,7 @@ uint16_t random_bitmap[240*240];
 
 #define BAD_GB_AHB1_PERIPEHRALS    (RCC_AHB1_GPIOA|RCC_AHB1_DMA2|RCC_AHB1_GPIOB)
 #define BAD_GB_APB2_PERIPHERALS    (RCC_APB2_USART1|RCC_APB2_SPI1|RCC_APB2_SYSCFGEN)
-
+volatile uint16_t frame;
 static inline void __main_clock_setup(){
     rcc_enable_hse();
     rcc_pll_setup( PLLP4, BADHAL_PLLM, BADHAL_PLLN, BADHAL_PLLQ, PLL_SOURCE_HSE);
@@ -97,21 +99,13 @@ int main(){
     __ENABLE_INTERUPTS;
     ili9341_init();   
     ili9341_fill(0x0000);
-    uint16_t frame = 0;
+    mem_init();
+    badstate_init();
     while(1){
-        for (uint16_t y = 0; y < 240; y++) {
-            for (uint16_t x = 0; x < 240; x++) {
-                uint16_t r = ((x+frame) >> 3) & 0x1F;         
-                uint16_t g = ((y+frame) >> 2) & 0x3F;          
-                uint16_t b = ((x ^ y) >> 3) & 0x1F;    
-                random_bitmap[y * 240 + x] = (r << 11) | (g << 5) | b;
-            }
-        }
-        frame++;
-        while(!ili9341_poll_dma_ready());
-        ili9341_fb_dma_fill_centered(random_bitmap, 240, 240);
-    
-        
+        update_cpu();
+        update_ppu(badstate.cpu.cycles);
+        update_timer(badstate.cpu.cycles);
+        badstate.cpu.cycles = 0;
     }
     return 0;
 }

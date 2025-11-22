@@ -56,6 +56,8 @@
 
 #include <stdint.h>
 
+#include "uart.h"
+
 #include "cpu.h"
 #include "defines.h"
 #include "mem.h"

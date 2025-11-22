@@ -4,6 +4,23 @@
 #include "badstate.h"
 #include "defines.h"
 
+#define BAD_ASSERT_IMPLEMENTATION
+#define BAD_ILI9341_STATIC
+#define BAD_ILI9341_INCLUDE_ISRS
+#define BAD_ILI9341_IMPLEMENTATION
+#define BAD_ILI9431_USE_ASSERT
+
+#include "ili9341.h"
+
+#define BAD_GB_SCREEN_X_START  ((( ILI9341_LCD_WIDTH - 160)>>1))
+#define BAD_GB_SCREEN_X_END    (BAD_GB_SCREEN_X_START + 159)
+
+#define BAD_GB_TOP_HALF_SCREEN_Y_START  (( ILI9341_LCD_HEIGHT - 144)>>1)
+#define BAD_GB_TOP_HALF_SCREEN_Y_END    (BAD_GB_TOP_HALF_SCREEN_Y_START + 71)
+
+#define BAD_GB_BOTTOM_HALF_SCREEN_Y_START  (BAD_GB_TOP_HALF_SCREEN_Y_END+1)
+#define BAD_GB_BOTTOM_HALF_SCREEN_Y_END    (BAD_GB_BOTTOM_HALF_SCREEN_Y_START + 71)
+
 
 //internal function to draw a line of the bg to the fb
 static inline void __render_bg(){
@@ -41,7 +58,7 @@ static inline void __render_bg(){
         
         uint8_t palette_index = (tb1 & 0x1)|((tb2&1)<<1);
         uint8_t colour = badstate.display.BGP_indeces[palette_index];
-        badstate.display.pixels[badstate.io.LY][draw_x]=badstate.display.palette[colour];
+        badstate.display.pixels[badstate.io.LY *PIXELS_PER_SCANLINE + draw_x]=badstate.display.palette[colour];
         tb1 >>= 1;
         tb2 >>= 1;            
         draw_x--;
@@ -99,7 +116,7 @@ static inline void __render_window(){
         
         uint8_t palette_index = (tb1 & 0x1)|((tb2&1)<<1);
         uint8_t colour = badstate.display.BGP_indeces[palette_index];
-        badstate.display.pixels[badstate.io.LY][draw_x]=badstate.display.palette[colour];
+        badstate.display.pixels[badstate.io.LY *PIXELS_PER_SCANLINE + draw_x]=badstate.display.palette[colour];
         tb1 >>= 1;
         tb2 >>= 1;            
         draw_x--;
@@ -235,9 +252,9 @@ static inline void __render_sprites(){
             uint16_t bg_colour = badstate.display.palette[0]; 
             for (; x_rem < pixnum ; x_rem++) {
                 uint8_t palette_index = (tb1 & 1)|((tb2 & 1)<<1);
-                if(badstate.display.pixels[badstate.io.LY][draw_x] == bg_colour && palette_index){
+                if(badstate.display.pixels[badstate.io.LY*PIXELS_PER_SCANLINE + draw_x] == bg_colour && palette_index){
                     uint8_t colour = badstate.display.OBP_indeces[palette][palette_index];
-                    badstate.display.pixels[badstate.io.LY][draw_x]=badstate.display.palette[colour];
+                    badstate.display.pixels[badstate.io.LY*PIXELS_PER_SCANLINE+ draw_x] = badstate.display.palette[colour];
                 }
                 tb1 >>= 1;
                 tb2 >>= 1;            
@@ -248,7 +265,7 @@ static inline void __render_sprites(){
                 uint8_t palette_index = (tb1 & 1)|((tb2 & 1)<<1);  
                 if(palette_index){
                     uint8_t colour = badstate.display.OBP_indeces[palette][palette_index];
-                    badstate.display.pixels[badstate.io.LY][draw_x]=badstate.display.palette[colour];
+                    badstate.display.pixels[badstate.io.LY*PIXELS_PER_SCANLINE + draw_x]=badstate.display.palette[colour];
                 }
                 tb1 >>= 1;
                 tb2 >>= 1;            
@@ -317,6 +334,15 @@ void start_ppu(){
 
 static void hblank_handler(){
     if(++badstate.io.LY!=VISIBLE_SCANLINES){
+        if(badstate.io.LY == VISIBLE_SCANLINES/2){
+            while(!ili9341_poll_dma_ready());
+            ili9341_fb_dma_fill(badstate.display.pixels, 
+                BAD_GB_SCREEN_X_START,
+                BAD_GB_TOP_HALF_SCREEN_Y_START, 
+                BAD_GB_SCREEN_X_END,
+                BAD_GB_TOP_HALF_SCREEN_Y_END,
+                11520);
+        }
         badstate.ppu.mode = MODE2_OAM;
         badstate.ppu.mode_cycles = MODE2_OAM_CYCLES;
         set_lcd_mode(MODE2_OAM);
@@ -326,6 +352,13 @@ static void hblank_handler(){
         set_lcd_mode(MODE1_VBLANK);
         REQUEST_INTERRUPT(INTERRUPT_VBLANK);
         badstate.display.frame_finished=1;
+        while(!ili9341_poll_dma_ready());
+        ili9341_fb_dma_fill(badstate.display.pixels+(VISIBLE_SCANLINES/2 * PIXELS_PER_SCANLINE), 
+            BAD_GB_SCREEN_X_START,
+            BAD_GB_BOTTOM_HALF_SCREEN_Y_START, 
+            BAD_GB_SCREEN_X_END,
+            BAD_GB_BOTTOM_HALF_SCREEN_Y_END,
+            11520);
     }
     check_ly_lyc();
    
