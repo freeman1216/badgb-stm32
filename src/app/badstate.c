@@ -58,7 +58,7 @@ void badstate_init() {
     badstate.display.BGP_indeces[3] = 3;
     
     badstate.display.window_curr_line = 0;
-    badstate.display.frame_finished = 0;
+    badstate.display.frame = 0;
 
     badstate.display.palette[0] = 0x7FFF;
     badstate.display.palette[1] = 0x7E10;
