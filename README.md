@@ -9,7 +9,7 @@ Uses my [codebase](https://github.com/freeman1216/badhal) for all the hardware s
 - 8 buttons (preferably rc filtered,as no debouncing happens in the code)
 
 ## Pinout
-# Exti input lines (no internal pullup)
+### Exti input lines (no internal pullup)
 - PA0 = right 
 - PA1 = left
 - PA2 = up
@@ -18,11 +18,11 @@ Uses my [codebase](https://github.com/freeman1216/badhal) for all the hardware s
 - PA5 = B 
 - PA6 = select
 - PA7 = start
-# ILI9341 SPI
+### ILI9341 SPI
 - PB3 = SPI clock
 - PB4 = SPI miso (not used, the code uses bidirectional output only)
 - PB5 = SPI mosi
-# ILI9341 GPIO
+### ILI9341 GPIO
 - PB6 = SPI cs (software driven)
 - PB7 = ILI9341 dc
 - PB8 = ILI9341 reset
